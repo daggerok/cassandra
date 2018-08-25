@@ -7,10 +7,6 @@ defaultTasks 'clean', 'build'
 compileJava.dependsOn(processResources)
 
 dependencies {
-  implementation "org.slf4j:slf4j-api:$slf4jVersion"
-  implementation "com.google.guava:guava:$guavaVersion"
-  compile "ch.qos.logback:logback-classic:$logbackVersion"
-
   implementation "info.archinnov:achilles-embedded:$achillesVersion"
   implementation "info.archinnov:achilles-core:$achillesVersion"
   annotationProcessor "info.archinnov:achilles-core:$achillesVersion"
@@ -34,5 +30,5 @@ dependencyManagement {
 }
 
 bootJar {
-  //launchScript()
+  launchScript()
 }
