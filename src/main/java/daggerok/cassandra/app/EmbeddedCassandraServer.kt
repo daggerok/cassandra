@@ -1,26 +1,12 @@
-package daggerok
+package daggerok.cassandra.app
 
 import info.archinnov.achilles.embedded.CassandraEmbeddedServer
 import info.archinnov.achilles.embedded.CassandraEmbeddedServerBuilder
 import info.archinnov.achilles.embedded.CassandraShutDownHook
 import info.archinnov.achilles.type.TypedMap
 import org.springframework.beans.factory.InitializingBean
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
-import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
-import org.springframework.web.reactive.function.server.ServerRequest
-import org.springframework.web.reactive.function.server.ServerResponse
-import org.springframework.web.reactive.function.server.ServerResponse.ok
-import org.springframework.web.reactive.function.server.body
-import org.springframework.web.reactive.function.server.router
-import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers.elastic
 import java.io.File
 import java.net.InetAddress
 import java.net.NetworkInterface
@@ -55,7 +41,8 @@ class EmbeddedCassandraServer(val env: Environment) : InitializingBean {
                 .filterNotNull()
                 .toTypedArray()
         )
-        .map { it.hostAddress ?: "127.0.0.1" }
+        .map { it.hostAddress }
+        .filterNot { it.contains("127.0.0.1") }
         .toSet()
   }
 
@@ -143,71 +130,5 @@ class EmbeddedCassandraServer(val env: Environment) : InitializingBean {
       println("Killing jvm...")
       System.exit(0)
     }.start()
-  }
-}
-
-@Configuration
-class WebfluxRoutesConfig() {
-
-  @Bean
-  fun webClient() = WebClient.create()
-
-  val stopHandler: (ServerRequest) -> Mono<ServerResponse> = {
-    val url = it.uri().toURL()
-    ok().body(
-        webClient()
-            .mutate()
-            .baseUrl("${url.protocol}://${url.host}:${url.port}" + "/cassandra/shutdown")
-            .build()
-            .post()
-            .exchange()
-            .subscribeOn(elastic())
-            .flatMap { it.bodyToMono<Any>() }
-    )
-  }
-
-  val fallbackHandler: (ServerRequest) -> Mono<ServerResponse> = {
-    val url = it.uri().toURL()
-    ok().body(
-        webClient()
-            .mutate()
-            .baseUrl("${url.protocol}://${url.host}:${url.port}" + "/cassandra/")
-            .build()
-            .get()
-            .exchange()
-            .subscribeOn(elastic())
-            .flatMap { it.bodyToMono<Any>() }
-    )
-  }
-
-  @Bean
-  fun routes() = router {
-    ("/").nest {
-      contentType(MediaType.APPLICATION_JSON_UTF8)
-
-      mapOf(
-
-          "/stop*" to stopHandler,
-          "/**" to fallbackHandler
-
-      ).forEach { path, handler ->
-
-        GET(path, handler)
-        POST(path, handler)
-        PUT(path, handler)
-        DELETE(path, handler)
-        PATCH(path, handler)
-        HEAD(path, handler)
-      }
-    }
-  }
-}
-
-@SpringBootApplication
-class App
-
-fun main(args: Array<String>) {
-  runApplication<App>(*args) {
-    setRegisterShutdownHook(true)
   }
 }

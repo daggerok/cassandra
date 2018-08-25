@@ -26,12 +26,10 @@ buildscript {
     allureVersion = '2.6.0'
 
     asciidoctorjPdfVersion = '1.5.0-alpha.15'
-    githubReleaseGradlePluginVersion = '0.1'
   }
 
   dependencies {
     classpath "org.asciidoctor:asciidoctorj-pdf:$asciidoctorjPdfVersion"
-    classpath "me.trnl:github-release-gradle-plugin:$githubReleaseGradlePluginVersion"
   }
 
   ext['selenium.version'] = "$seleniumDriverVersion"
@@ -74,4 +72,3 @@ apply from: "$projectDir/gradle/findbugs.gradle"
 apply from: "$projectDir/gradle/jacoco.gradle"
 apply from: "$projectDir/gradle/docker-compose.gradle"
 apply from: "$projectDir/gradle/docs.gradle"
-apply from: "$projectDir/gradle/github-release.gradle"
