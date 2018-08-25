@@ -1,0 +1,113 @@
+notifications:
+  email: false
+
+language: java
+jdk:
+- oraclejdk8
+#- oraclejdk10
+
+service:
+- docker
+
+addons:
+  apt:
+    update: true
+    sources:
+    - google-chrome
+    packages:
+    - google-chrome-stable
+    - google-chrome-stable
+    - libappindicator1
+    - fonts-liberation
+    - bash
+    - curl
+    - libxml2-utils
+    - docker-ce
+
+install: true
+before_install:
+- export CHROME_BIN=/usr/bin/google-chrome
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+#
+- sudo add-apt-repository universe -y >/dev/null
+- echo "deb http://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list >/dev/null
+- sudo apt-get update -yqq >/dev/null
+- sudo apt-get install -yqq --no-install-suggests --no-install-recommends
+  tree jq python-pip curl bash sudo >/dev/null
+#
+- sudo pip install docker-compose httpie >/dev/null 2>&1
+#
+- source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
+- stop_any 8080 3000 80 >/dev/null
+#
+- curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - >/dev/null
+- echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list >/dev/null
+- sudo apt-get update -yqq >/dev/null
+- sudo apt-get install -yqq --no-install-suggests --no-install-recommends yarn >/dev/null
+
+script:
+- export root=$(pwd)
+#
+- bash gradlew
+- java -jar ./build/libs/*.jar &
+- wait_for 8080
+- sleep 10
+- http :8080/
+- http :8080/stop
+- sleep 10
+- stop_any 8080 80
+#
+- bash gradlew composeUp
+- http :8080/
+- http :8080/stop
+- bash gradlew composeDown
+
+before_cache:
+- for item in $(find ~/.gradle -name "*.lock");
+    do sudo rm -rf $item ;
+  done
+
+cache:
+  directories:
+  - $HOME/.m2
+  - $HOME/.gradle
+  - $HOME/.docker
+
+before_deploy:
+- cd ${root}
+- mkdir -p ${HOME}/.m2
+- echo '<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"                      ' >  ${HOME}/.m2/settings.xml
+- echo '          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"               ' >> ${HOME}/.m2/settings.xml
+- echo '          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0          ' >> ${HOME}/.m2/settings.xml
+- echo '                              http://maven.apache.org/xsd/settings-1.0.0.xsd">' >> ${HOME}/.m2/settings.xml
+- echo '  <servers>                                                                   ' >> ${HOME}/.m2/settings.xml
+- echo '    <server>                                                                  ' >> ${HOME}/.m2/settings.xml
+- echo '      <id>github</id>                                                         ' >> ${HOME}/.m2/settings.xml
+- echo '      <username>daggerok</username>                                           ' >> ${HOME}/.m2/settings.xml
+- echo "      <password>${GITHUB_PASSWORD}</password>                                 " >> ${HOME}/.m2/settings.xml
+- echo '    </server>                                                                 ' >> ${HOME}/.m2/settings.xml
+- echo '  </servers>                                                                  ' >> ${HOME}/.m2/settings.xml
+- echo '</settings>                                                                   ' >> ${HOME}/.m2/settings.xml
+- ./mvnw
+#
+- ./mvnw -Pdocs >/dev/null
+- mkdir -p target/generated-docs
+- cp -Rf ./target/generated-docs/index.html ./target/generated-docs/404.html
+
+env:
+  global:
+  - TERM=dumb
+  - secure: HI950BLMLPg7TwV7Pb8OF+l3jM9S4dN2TJwfVKu7zaes/WnEc3lenphGrDG/l8oAMqstYhLQwAoyJZQUmSUEnuQ7MeyzZpzwxixffXETzieGs2fg8HFzQNfCZBdycxnhF9A6aNJEq21wD4nMpgWYjvv0hTrYenp+anplHMzlY53MNJTQJl2Ykryqgrq9Jfv4bJqfoS96nPOwiXzbU59YHCX7RFCMV991notAlB4mUFdmq8I3vUKoFYrcAS6GcR/sL2VSg+z3BLbgxgewPbauyZfzxQZnImjdrl8bre0QBFdhSEFu3fuWy5IZJw6KlltoF2ypRYduekRQFb2bIdSPZsJGiufaErCdt93Vmqm2UTpBRxBQNhesCyoshPUUd429H96J/XylPMzddpagJbehnfJYWrM7B48C1oPPE01d1OL6A9Cmr4C+AJ1+P9TBP4NDRvhvrAwEL/hTG9dn0K5QAVQ7lkWzlUQrYauQCwi32hAUN3i7dGzjQOA1A5FWOTCRs4tHneQcr09QEJlvPuGb+HxOIJPQ+6Fo5k9obyPjZIjU4JutHzRKmCH5jJjx1F6uBEHL5S0z3h8n0myk8jlM3JbYGBbiGrFaZO/sV0zA1oSh5fqEbdWogCqP1N6IDfbn7WHzgl8agXjaOIvSZEZQUZv/H4KRv4VHVCU8uyo8sBA=
+  - secure: RPSoOAHzj9ko0G6Buw/XYspiucI92W5Ab855KzKd7yxXVeXDXmL5q36www5YqOCPvGWCiULhXcyXiQUNLI4wyi3XmMG9R14hLh7RJ0kbHGL5NDnhTO3bSjSGs20E2lzaj6xdnaazJuNi00DRXvK1P85qXvhq4xeTt+hU2AWUYDY21Cm0+IO9a9ntueRBSTFcfENokBUK6hEK5eY3W2C/EQM5wAuhOwP0FlKHRa7dm+qMM17EiDG3wQcOlf3zWuG0EgWrZMADjsiVCgcil9LUrXvsk9mM1+h3vsmK92AdHuI2N7qBdYd//vPuXTQ0CJ6RvjSUe1bSTR6YnmJ1pWNpMSRgaStJzCf3YX8lfIFtXoHrpQ4B0YVWpxSKTVXLsKvugmsdAri1sBW9lGGMGktM8hScm93uibuICPJSsLn58D5PYEM8e+SOfJt5jyR6tH+Q1FBUr/b0pqmSqleSVzJRjmWmS5eV87MWJfFQ+v9ZBfB+SRmsXTMk0C8EMZFt4qaWXY+TjpI/k+QovpvVtBVu2+9BVP7PSDnEzd+iwNsupZxac/iZTI/x0fiYKbiZjXrAPsichqGecEKoWyyZt+9dOYZAmQA8ZXZ1lC6Dduo5+O0MYqF/emmb5ccvj2tn4DIDOLzgnuk5rD4z+02d5wD4KPqhXcJnnZPXPHf29ucYP18=
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  # travis encrypt GITHUB_TOKEN=<your github repo token> --add
+  github-token: "$GITHUB_TOKEN"
+  keep-history: true
+  on:
+    branch: master
+  local-dir: target/generated-docs
+  target_branch: gh-pages

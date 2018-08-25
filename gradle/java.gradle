@@ -4,7 +4,7 @@ allprojects {
   apply plugin: 'io.franzbecker.gradle-lombok'
   lombok.version = project.lombokVersion
 
-  version = '0.0.1'
+  version = '0.0.1-jar'
   group = 'com.github.daggerok'
   sourceCompatibility = targetCompatibility = "$javaVersion"
 
@@ -13,6 +13,5 @@ allprojects {
   dependencies {
     // In java we trust...
     //implementation "io.vavr:vavr:$vavrVersion"
-    //implementation "ch.qos.logback:logback-classic:$logbackVersion"
   }
 }
