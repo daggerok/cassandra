@@ -4,6 +4,7 @@ import info.archinnov.achilles.embedded.CassandraEmbeddedServer
 import info.archinnov.achilles.embedded.CassandraEmbeddedServerBuilder
 import info.archinnov.achilles.embedded.CassandraShutDownHook
 import info.archinnov.achilles.type.TypedMap
+import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
@@ -20,43 +21,18 @@ class EmbeddedCassandraServer(val env: Environment) : InitializingBean {
 
   companion object {
     private val now = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyMMddhhmmssSSS"))
-  }
-
-  fun addresses(): Set<String> {
-    val localhost = InetAddress.getLocalHost()
-    return InetAddress
-        .getAllByName(localhost.canonicalHostName)
-        .orEmpty()
-        .filterNotNull()
-        .toMutableSet()
-        .plus(localhost)
-        .toMutableSet()
-        .plus(
-            NetworkInterface
-                .getNetworkInterfaces()
-                .toList()
-                .filterNotNull()
-                .map { it.inetAddresses }
-                .flatMap { it.toList() }
-                .filterNotNull()
-                .toTypedArray()
-        )
-        .map { it.hostAddress }
-        .filterNot { it.contains("127.0.0.1") }
-        .toSet()
+    private val cassandraEmbeddedServerBuilder = CassandraEmbeddedServerBuilder
+        .builder()
+        .withConcurrentReads(16)
+        .withConcurrentWrites(16)
+        .withParams(TypedMap())
+        .withClusterName("embedded-cassandra")
   }
 
   lateinit var cassandraShutDownHook: CassandraShutDownHook
   lateinit var server: CassandraEmbeddedServer
 
   override fun afterPropertiesSet() {
-
-    val cassandraEmbeddedServerBuilder = CassandraEmbeddedServerBuilder
-        .builder()
-        .withConcurrentReads(16)
-        .withConcurrentWrites(16)
-        .withParams(TypedMap())
-        .withClusterName("embedded-cassandra")
 
     val cleanDataFilesAtStartup = env.getProperty("cassandra.clean-data-files-at-startup", "false").toBoolean()
     cassandraEmbeddedServerBuilder
@@ -96,13 +72,14 @@ class EmbeddedCassandraServer(val env: Environment) : InitializingBean {
     cassandraEmbeddedServerBuilder
         .withSavedCachesFolder(savedCaches)
 
-    val addresses = addresses().filterNot { it.contains("127.0.0.1") }
-    val address = if (addresses.isEmpty()) "127.0.0.1" else addresses.first()
-    cassandraEmbeddedServerBuilder
-        .withBroadcastRpcAddress(address)
-        .withBroadcastAddress(address)
-        .withRpcAddress(address)
-        .withListenAddress(address)
+//    val addresses = addresses().filterNot { it.contains("127.0.0.1") }
+//    val address = if (addresses.isEmpty()) "127.0.0.1" else addresses.first()
+//    cassandraEmbeddedServerBuilder
+//        .withBroadcastRpcAddress(address)
+//        .withBroadcastAddress(address)
+//        .withRpcAddress(address)
+//        .withListenAddress(address)
+//    println("\n\nlisten address: $address\n")
 
     val cqlPort = env.getProperty("cassandra.port", "9042").toInt()
     cassandraEmbeddedServerBuilder
@@ -122,12 +99,34 @@ class EmbeddedCassandraServer(val env: Environment) : InitializingBean {
     server = cassandraEmbeddedServerBuilder.buildServer()
   }
 
+  fun addresses() = InetAddress
+      .getAllByName(InetAddress.getLocalHost().canonicalHostName)
+      .orEmpty()
+      .filterNotNull()
+      .toMutableSet()
+      .plus(
+          NetworkInterface
+              .getNetworkInterfaces()
+              .toList()
+              .filterNotNull()
+              .map { it.inetAddresses }
+              .flatMap { it.toList() }
+              .filterNotNull()
+              .toTypedArray()
+      )
+      .map { it.hostAddress }
+      .filterNot { it.contains("127.0.0.1") }
+      .toSet()
+
   @PreDestroy
   fun destroy() {
+
+    println("\n\nKilling jvm...\n")
     cassandraShutDownHook.shutDownNow()
+
     Thread {
       TimeUnit.SECONDS.sleep(3)
-      println("Killing jvm...")
+      println("\n\nDone.\n")
       System.exit(0)
     }.start()
   }

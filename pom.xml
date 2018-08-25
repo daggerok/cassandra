@@ -51,9 +51,6 @@
       allows to specify a commitsh:
         ./mvnw -Dgithub.commitish=release/1.0.0
 
-      override credentials with system properties:
-        ./mvnw -Dusername=ololo -Dpassword=trololo
-
   -->
 
   <scm>
@@ -153,41 +150,6 @@
       <properties>
         <gradle.executable>./gradlew</gradle.executable>
       </properties>
-    </profile>
-
-    <profile>
-      <id>docker</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.dkanejs.maven.plugins</groupId>
-            <artifactId>docker-compose-maven-plugin</artifactId>
-            <version>1.0.1</version>
-            <executions>
-              <execution>
-                <id>up</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>up</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>down</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>down</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <composeFile>${project.basedir}/docker-compose-maven.yaml</composeFile>
-              <detachedMode>true</detachedMode>
-              <removeVolumes>true</removeVolumes>
-              <detail>true</detail>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
 
     <profile>

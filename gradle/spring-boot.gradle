@@ -8,7 +8,7 @@ compileJava.dependsOn(processResources)
 
 dependencies {
   implementation "info.archinnov:achilles-embedded:$achillesVersion"
-  //implementation "org.springframework.data:spring-data-cassandra:$springDataCassandraVersion"
+  implementation "info.archinnov:achilles-core:$achillesVersion"
   annotationProcessor "info.archinnov:achilles-core:$achillesVersion"
   testAnnotationProcessor "info.archinnov:achilles-core:$achillesVersion"
 
@@ -26,8 +26,6 @@ dependencies {
 dependencyManagement {
   imports {
     mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
-    mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
-    mavenBom "org.springframework.data:spring-data-releasetrain:$springDataVersion"
   }
 }
 

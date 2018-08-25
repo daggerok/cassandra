@@ -2,24 +2,21 @@
 
 //tag::content[]
 
-Read link:https://daggerok.github.io/embedded-cassandra-server[project reference documentation]
-
-.dockerc-compose (by using gradle or maven)
-[source,bash]
-----
-./gradlew build composeUp
-./gradlew composeDown
-
-bash mvnw com.dkanejs.maven.plugins:docker-compose-maven-plugin:1.0.1:up -P docker
-bash mvnw com.dkanejs.maven.plugins:docker-compose-maven-plugin:1.0.1:down -P docker
-----
+link:https://daggerok.github.io/embedded-cassandra-server[Reference Documentation]
 
 .gradle
 [source,bash]
 ----
 ./gradlew
-java -jar build/libs/*.jar
+java -jar build/libs/*.jar # or:
 bash build/libs/*.jar
+----
+
+.dockerc-compose by using gradle
+[source,bash]
+----
+./gradlew build composeUp
+./gradlew composeDown
 ----
 
 .maven docummentation
