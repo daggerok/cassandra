@@ -1,0 +1,18 @@
+spring:
+  output:
+    ansi:
+      enabled: always
+
+management:
+  endpoint:
+    shutdown:
+      enabled: true
+    info:
+      enabled: true
+    health:
+      enabled: true
+  endpoints:
+    web:
+      base-path: /cassandra
+      exposure:
+        include: 'shutdown'
