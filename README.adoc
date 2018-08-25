@@ -4,6 +4,33 @@
 
 link:https://daggerok.github.io/embedded-cassandra-server[Reference Documentation]
 
+=== usage
+
+[source,bash]
+----
+# get
+wget https://github.com/daggerok/embedded-cassandra-server/releases/download/0.0.1/embedded-cassandra-server-0.0.1.jar
+
+# run as executable binary
+chmod +x embedded-cassandra-server-0.0.1.jar
+./embedded-cassandra-server-0.0.1.jar
+
+# run as jar
+java -jar ./embedded-cassandra-server-0.0.1.jar
+----
+
+=== github deployment
+
+=== github deployment
+
+.maven github fat jar artifact deployment
+[source,bash]
+----
+./mvnw
+----
+
+=== development
+
 .gradle
 [source,bash]
 ----
@@ -19,7 +46,7 @@ bash build/libs/*.jar
 ./gradlew composeDown
 ----
 
-.maven docummentation
+.maven docummentation github pages deployment
 [source,bash]
 ----
 ./mvnw -Pdocs
