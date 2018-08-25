@@ -6,16 +6,21 @@ link:https://daggerok.github.io/embedded-cassandra-server[Reference Documentatio
 
 === usage
 
+.get and run executable binary
 [source,bash]
 ----
-# get
-wget https://github.com/daggerok/embedded-cassandra-server/releases/download/0.0.1/embedded-cassandra-server-0.0.1.jar
-
-# run as jar
-java -jar ./embedded-cassandra-server-0.0.1.jar
+wget https://github.com/daggerok/embedded-cassandra-server/releases/download/0.0.1/embedded-cassandra-server-0.0.1-bin.jar
+chmod +x embedded-cassandra-server-0.0.1-bin.jar
+./embedded-cassandra-server-0.0.1-bin.jar
 ----
 
-=== github deployment
+.get and run jar file
+[source,bash]
+----
+wget https://github.com/daggerok/embedded-cassandra-server/releases/download/0.0.1/embedded-cassandra-server-0.0.1.jar
+chmod +x embedded-cassandra-server-0.0.1.jar
+./embedded-cassandra-server-0.0.1.jar
+----
 
 === github deployment
 

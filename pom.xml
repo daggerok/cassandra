@@ -9,7 +9,7 @@
 
   <groupId>com.github.daggerok</groupId>
   <artifactId>embedded-cassandra-server</artifactId>
-  <version>0.0.1-jar</version>
+  <version>0.0.1</version>
   <packaging>jar</packaging>
 
   <properties>
