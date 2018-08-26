@@ -91,6 +91,7 @@ before_deploy:
 - echo '</settings>                                                                   ' >> ${HOME}/.m2/settings.xml
 - ./mvnw
 #
+#
 - ./mvnw -Pdocs >/dev/null
 - mkdir -p target/generated-docs
 - cp -Rf ./target/generated-docs/index.html ./target/generated-docs/404.html
