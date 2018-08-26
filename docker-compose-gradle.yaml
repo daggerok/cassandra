@@ -6,14 +6,14 @@ services:
     build:
       context: .
       dockerfile: gradle/Dockerfile
-    volumes: ['cassandra-data:/home/cassandra']
+    volumes: ['data:/home/cassandra']
     ports:
     - '8080:8080'
     - '9042:9042'
     networks: [backing-services]
 
 volumes:
-  cassandra-data: {}
+  data: {}
 
 networks:
   backing-services:

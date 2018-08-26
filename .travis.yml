@@ -3,8 +3,8 @@ notifications:
 
 language: java
 jdk:
-- oraclejdk8
-#- oraclejdk10
+- oraclejdk10
+#- oraclejdk8
 
 service:
 - docker
@@ -50,8 +50,10 @@ script:
 - export root=$(pwd)
 #
 - ./gradlew
-- test ".${TRAVIS_BRANCH}" == ".master" && java -jar ./build/libs/*.jar &
-- test ".${TRAVIS_BRANCH}" == ".bin"    && ./build/libs/*.jar &
+- echo "TRAVIS_BRANCH -> $TRAVIS_BRANCH"
+#- [[ $TRAVIS_BRANCH = *"bin"* ]] && bash ./build/libs/*.jar &
+- if [[ $TRAVIS_BRANCH = *"bin"* ]]; then bash ./build/libs/*.jar & ;
+  else java -jar ./build/libs/*.jar & ; fi
 - wait_for 8080
 - sleep 10
 - http :8080/
@@ -94,22 +96,22 @@ before_deploy:
 #
 - if [ ".${TRAVIS_BRANCH}" == ".master" ];
     then
-      echo "docker build
+      docker build
         --pull --rm --force-rm --no-cache
         -t ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}
-           ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:latest
-           ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:latest-alpine . " ;
+        -t ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:latest
+        -t ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:latest-alpine . ;
   else
-    echo "docker build
+    docker build
       --pull --rm --force-rm --no-cache
       -t ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}
-         ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${TRAVIS_BRANCH}
-         ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${TRAVIS_BRANCH}-alpine . " ;
+      -t ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${TRAVIS_BRANCH}
+      -t ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${TRAVIS_BRANCH}-alpine . ;
   fi
-- echo "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
-- echo "docker push ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}"
+- echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin
+- docker push ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}
 #
-- ./mvnw -Pdocs >/dev/null
+- ./mvnw -Pdocs
 - mkdir -p target/generated-docs
 - cp -Rf ./target/generated-docs/index.html ./target/generated-docs/404.html
 
