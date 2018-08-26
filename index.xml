@@ -3,8 +3,8 @@
 <?asciidoc-numbered?>
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xl="http://www.w3.org/1999/xlink" version="5.0" xml:lang="en">
 <info>
-<title>cassandra-server (0.0.1)</title>
-<date>2018-08-26 07:25:44 UTC</date>
+<title>cassandra (0.0.1)</title>
+<date>2018-08-26 08:27:12 UTC</date>
 <author>
 <personname>
 <firstname>Maksim</firstname>
@@ -16,30 +16,40 @@
 <revhistory>
 <revision>
 <revnumber>0.0.1</revnumber>
-<date>2018-08-26 07:25:44 UTC</date>
+<date>2018-08-26 08:27:12 UTC</date>
 <authorinitials>MK</authorinitials>
 </revision>
 </revhistory>
 </info>
 <chapter xml:id="documentation">
 <title>Documentation</title>
-<simpara><link xl:href="https://daggerok.github.io/cassandra-server">Reference Documentation</link></simpara>
-<section xml:id="usage">
-<title>usage</title>
+<simpara>Cassandra Server based on <link xl:href="https://github.com/doanduyhai/Achilles">Achilles Embedded Cassandra Server</link> and <link xl:href="https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html">Spring WebFlux</link></simpara>
+<simpara><link xl:href="https://daggerok.github.io/cassandra">Reference Documentation</link></simpara>
+<section xml:id="dockerfile-usage">
+<title>Dockerfile usage</title>
 <formalpara>
-<title>get and run executable binary</title>
+<title>TODO</title>
 <para>
-<programlisting language="bash" linenumbering="unnumbered">wget https://github.com/daggerok/cassandra-server/releases/download/0.0.1/cassandra-server-0.0.1-bin.jar
-chmod +x cassandra-server-0.0.1-bin.jar
-./cassandra-server-0.0.1-bin.jar</programlisting>
+<programlisting language="Dockerfile" linenumbering="unnumbered">FROM daggerok/cassandra</programlisting>
+</para>
+</formalpara>
+</section>
+<section xml:id="executable-jar-usage">
+<title>executable jar usage</title>
+<formalpara>
+<title>get and run as a binary file</title>
+<para>
+<programlisting language="bash" linenumbering="unnumbered">wget https://github.com/daggerok/cassandra/releases/download/0.0.1/cassandra-0.0.1-bin.jar
+chmod +x cassandra-0.0.1-bin.jar
+./cassandra-0.0.1-bin.jar</programlisting>
 </para>
 </formalpara>
 <formalpara>
-<title>get and run jar file</title>
+<title>get and run as regular java jar file</title>
 <para>
-<programlisting language="bash" linenumbering="unnumbered">wget https://github.com/daggerok/cassandra-server/releases/download/0.0.1/cassandra-server-0.0.1.jar
-chmod +x cassandra-server-0.0.1.jar
-./cassandra-server-0.0.1.jar</programlisting>
+<programlisting language="bash" linenumbering="unnumbered">wget https://github.com/daggerok/cassandra/releases/download/0.0.1/cassandra-0.0.1.jar
+chmod +x cassandra-0.0.1.jar
+./cassandra-0.0.1.jar</programlisting>
 </para>
 </formalpara>
 </section>
@@ -81,10 +91,10 @@ java -jar build/libs/*.jar</programlisting>
 <title>Links</title>
 <itemizedlist>
 <listitem>
-<simpara><link xl:href="https://github.com/daggerok/cassandra-server">GitHub repo</link></simpara>
+<simpara><link xl:href="https://github.com/daggerok/cassandra">GitHub repo</link></simpara>
 </listitem>
 <listitem>
-<simpara><link xl:href="https://daggerok.github.io/cassandra-server">GitHub pages</link></simpara>
+<simpara><link xl:href="https://daggerok.github.io/cassandra">GitHub pages</link></simpara>
 </listitem>
 </itemizedlist>
 </chapter>
