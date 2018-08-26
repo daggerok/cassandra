@@ -8,7 +8,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.github.daggerok</groupId>
-  <artifactId>embedded-cassandra-server</artifactId>
+  <artifactId>cassandra-server</artifactId>
   <version>0.0.1</version>
   <packaging>jar</packaging>
 
@@ -54,10 +54,10 @@
   -->
 
   <scm>
-    <url>https://github.com/daggerok/embedded-cassandra-server.git</url>
-    <connection>scm:git:https://github.com/daggerok/embedded-cassandra-server.git</connection>
-    <!--<connection>scm:git:git://github.com/daggerok/embedded-cassandra-server.git</connection>-->
-    <developerConnection>scm:git:git@github.com:daggerok/embedded-cassandra-server.git</developerConnection>
+    <url>https://github.com/daggerok/cassandra-server.git</url>
+    <connection>scm:git:https://github.com/daggerok/cassandra-server.git</connection>
+    <!--<connection>scm:git:git://github.com/daggerok/cassandra-server.git</connection>-->
+    <developerConnection>scm:git:git@github.com:daggerok/cassandra-server.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 

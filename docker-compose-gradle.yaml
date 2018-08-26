@@ -2,18 +2,18 @@ version: "2.1"
 
 services:
 
-  gradle-embedded-cassandra-server-app:
+  cassandra:
     build:
       context: .
       dockerfile: gradle/Dockerfile
-    volumes: ["gradle-embedded-cassandra-server-app-data:/home/appuser"]
+    volumes: ["cassandra-data:/home/cassandra"]
     ports:
     - "8080:8080"
     - "9042:9042"
     networks: [backing-services]
 
 volumes:
-  gradle-embedded-cassandra-server-app-data: {}
+  cassandra-data: {}
 
 networks:
   backing-services:
