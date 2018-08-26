@@ -35,14 +35,6 @@
             </server>
         </servers>
 
-    important:
-
-      <scm>
-        <connection>scm:git:https://github.com/username/repo</connection>
-      </scm>
-
-      value must be `scm:git:https://github.com...` but not `scm:git:git://github.com...`
-
     tips:
 
       creates the release in draft state:
@@ -56,7 +48,7 @@
   <scm>
     <url>https://github.com/daggerok/cassandra-server.git</url>
     <connection>scm:git:https://github.com/daggerok/cassandra-server.git</connection>
-    <!--<connection>scm:git:git://github.com/daggerok/cassandra-server.git</connection>-->
+    <!--<connection>scm:git:git://github.com/daggerok/cassandra-server.git</connection>--><!-- must be scm:git:https://github.com... but not scm:git:git://github.com... -->
     <developerConnection>scm:git:git@github.com:daggerok/cassandra-server.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
@@ -155,6 +147,8 @@
     <profile>
       <id>docs</id>
       <build>
+        <defaultGoal>clean process-resources</defaultGoal>
+
         <plugins>
           <plugin>
             <groupId>org.asciidoctor</groupId>
@@ -245,8 +239,6 @@
             </executions>
           </plugin>
         </plugins>
-
-        <defaultGoal>clean process-resources</defaultGoal>
       </build>
     </profile>
   </profiles>
