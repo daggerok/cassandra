@@ -1,0 +1,26 @@
+allprojects {
+  apply plugin: 'java'
+
+  group = 'com.github.daggerok'
+  sourceCompatibility = targetCompatibility = "$javaVersion"
+
+  defaultTasks 'clean', 'build'
+
+  dependencies {
+    implementation "org.slf4j:slf4j-api:$slf4jVersion"
+    implementation "com.google.guava:guava:$guavaVersion"
+    compile "ch.qos.logback:logback-classic:$logbackVersion"
+  }
+
+  apply plugin: 'io.franzbecker.gradle-lombok'
+
+  lombok.version = project.lombokVersion
+
+  apply plugin: 'io.spring.dependency-management'
+
+  dependencyManagement {
+    imports {
+      mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
+    }
+  }
+}

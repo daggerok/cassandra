@@ -4,6 +4,8 @@
 
 Cassandra Server based on link:https://github.com/doanduyhai/Achilles[Achilles Embedded Cassandra Server] and link:https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html[Spring WebFlux]
 
+Status: in progress...
+
 link:https://daggerok.github.io/cassandra[Reference Documentation]
 
 === Dockerfile usage
