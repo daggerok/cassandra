@@ -120,12 +120,12 @@ class EmbeddedCassandraServer(val env: Environment) : InitializingBean {
   @PreDestroy
   fun destroy() {
 
-    println("\n\nShutdown cassandra...\n")
+    println("\nShutdown cassandra...\n")
     cassandraShutDownHook.shutDownNow()
 
     Thread {
       TimeUnit.SECONDS.sleep(3)
-      println("\n\nDone.\n")
+      println("\nDone.\n")
       System.exit(0)
     }.start()
   }
