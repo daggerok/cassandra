@@ -36,6 +36,6 @@ HEALTHCHECK --timeout=1s \
             CMD curl -f http://127.0.0.1:${PORT}/cassandra/health || exit 1
 RUN wget --no-cookies \
          --no-check-certificate \
-           "https://github.com/daggerok/cassandra-server/releases/download/${VERSION_ARG}/cassandra-server-${VERSION_ARG}.jar" \
+           "https://github.com/daggerok/cassandra/releases/download/${VERSION_ARG}/cassandra-${VERSION_ARG}.jar" \
            -O /tmp/jce_policy-8.zip \
  && apk del busybox-suid openssh-client shadow

@@ -1,25 +1,35 @@
-= cassandra-server image:https://travis-ci.org/daggerok/cassandra-server.svg?branch=master["Build Status", link="https://travis-ci.org/daggerok/cassandra-server"]
+= cassandra image:https://travis-ci.org/daggerok/cassandra.svg?branch=master["Build Status", link="https://travis-ci.org/daggerok/cassandra"]
 
 //tag::content[]
 
-link:https://daggerok.github.io/cassandra-server[Reference Documentation]
+Cassandra Server based on link:https://github.com/doanduyhai/Achilles[Achilles Embedded Cassandra Server] and link:https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html[Spring WebFlux]
 
-=== usage
+link:https://daggerok.github.io/cassandra[Reference Documentation]
 
-.get and run executable binary
+=== Dockerfile usage
+
+.TODO
+[source,Dockerfile]
+----
+FROM daggerok/cassandra
+----
+
+=== executable jar usage
+
+.get and run as a binary file
 [source,bash]
 ----
-wget https://github.com/daggerok/cassandra-server/releases/download/0.0.1/cassandra-server-0.0.1-bin.jar
-chmod +x cassandra-server-0.0.1-bin.jar
-./cassandra-server-0.0.1-bin.jar
+wget https://github.com/daggerok/cassandra/releases/download/0.0.1/cassandra-0.0.1-bin.jar
+chmod +x cassandra-0.0.1-bin.jar
+./cassandra-0.0.1-bin.jar
 ----
 
-.get and run jar file
+.get and run as regular java jar file
 [source,bash]
 ----
-wget https://github.com/daggerok/cassandra-server/releases/download/0.0.1/cassandra-server-0.0.1.jar
-chmod +x cassandra-server-0.0.1.jar
-./cassandra-server-0.0.1.jar
+wget https://github.com/daggerok/cassandra/releases/download/0.0.1/cassandra-0.0.1.jar
+chmod +x cassandra-0.0.1.jar
+./cassandra-0.0.1.jar
 ----
 
 === github deployment

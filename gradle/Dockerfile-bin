@@ -1,8 +1,17 @@
 FROM openjdk:8u171-jre-alpine3.8
 MAINTAINER Maksim Kostromin https://github.com/daggerok
+ARG JAVA_OPTS_ARGS='\
+ -Djavax.net.debug=ssl \
+ -Djava.net.preferIPv4Stack=true \
+ -XX:+UnlockExperimentalVMOptions \
+ -XX:+UseCGroupMemoryLimitForHeap \
+ -XshowSettings:vm '
+ARG PORT_ARG=8080
+ENV JAVA_OPTS="${JAVA_OPTS} ${JAVA_OPTS_ARGS}" \
+    PORT="${PORT_ARG}"
 RUN apk --no-cache --update add busybox-suid bash curl unzip sudo openssh-client shadow wget \
- && adduser -h /home/appuser -s /bin/bash -D -u 1025 appuser wheel \
- && echo 'appuser ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
+ && adduser -h /home/cassandra -s /bin/bash -D -u 1025 cassandra wheel \
+ && echo 'cassandra ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
  && sed -i 's/.*requiretty$/Defaults !requiretty/' /etc/sudoers \
  && wget --no-cookies \
          --no-check-certificate \
@@ -14,20 +23,13 @@ RUN apk --no-cache --update add busybox-suid bash curl unzip sudo openssh-client
  && mv -f /tmp/UnlimitedJCEPolicyJDK8 ${JAVA_HOME}/lib/security \
  && apk del busybox-suid unzip openssh-client shadow wget \
  && rm -rf /var/cache/apk/* /tmp/*
-USER appuser
-WORKDIR /home/appuser
-VOLUME /home/appuser
-ARG JAVA_OPTS_ARGS='\
- -Djavax.net.debug=ssl \
- -Djava.net.preferIPv4Stack=true \
- -XX:+UnlockExperimentalVMOptions \
- -XX:+UseCGroupMemoryLimitForHeap \
- -XshowSettings:vm '
-ENV JAVA_OPTS="${JAVA_OPTS} ${JAVA_OPTS_ARGS}"
+USER cassandra
+WORKDIR /home/cassandra
+VOLUME /home/cassandra
 ENTRYPOINT /bin/bash ./app.jar
 CMD /bin/bash
-EXPOSE 8080
+EXPOSE ${PORT}
 HEALTHCHECK --timeout=1s \
             --retries=66 \
-            CMD curl -f http://127.0.0.1:8080/cassandra/health || exit 1
-COPY --chown=appuser ./build/libs/*.jar ./app.jar
+            CMD curl -f http://127.0.0.1:${PORT}/cassandra/health || exit 1
+COPY --chown=cassandra ./build/libs/*.jar ./app.jar

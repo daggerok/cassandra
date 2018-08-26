@@ -8,14 +8,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.github.daggerok</groupId>
-  <artifactId>cassandra-server</artifactId>
+  <artifactId>cassandra</artifactId>
   <version>0.0.1</version>
   <packaging>jar</packaging>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.target>${maven.compiler.target}</maven.compiler.target>
   </properties>
 
   <!--
@@ -46,10 +46,10 @@
   -->
 
   <scm>
-    <url>https://github.com/daggerok/cassandra-server.git</url>
-    <connection>scm:git:https://github.com/daggerok/cassandra-server.git</connection>
-    <!--<connection>scm:git:git://github.com/daggerok/cassandra-server.git</connection>--><!-- must be scm:git:https://github.com... but not scm:git:git://github.com... -->
-    <developerConnection>scm:git:git@github.com:daggerok/cassandra-server.git</developerConnection>
+    <url>https://github.com/daggerok/cassandra.git</url>
+    <connection>scm:git:https://github.com/daggerok/cassandra.git</connection>
+    <!--<connection>scm:git:git://github.com/daggerok/cassandra.git</connection>--><!-- must be scm:git:https://github.com... but not scm:git:git://github.com... -->
+    <developerConnection>scm:git:git@github.com:daggerok/cassandra.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 
