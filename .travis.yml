@@ -50,7 +50,8 @@ script:
 - export root=$(pwd)
 #
 - ./gradlew
-- java -jar ./build/libs/*.jar &
+- test ".${TRAVIS_BRANCH}" == ".master" && java -jar ./build/libs/*.jar &
+- test ".${TRAVIS_BRANCH}" == ".bin"    && ./build/libs/*.jar &
 - wait_for 8080
 - sleep 10
 - http :8080/
@@ -61,7 +62,7 @@ script:
 - ./gradlew composeUp
 - http :8080/
 - http :8080/stop
-- bash gradlew composeDown
+- ./gradlew composeDown
 
 before_cache:
 - for item in $(find ~/.gradle -name "*.lock");
@@ -91,6 +92,22 @@ before_deploy:
 - echo '</settings>                                                                   ' >> ${HOME}/.m2/settings.xml
 - ./mvnw
 #
+- if [ ".${TRAVIS_BRANCH}" == ".master" ];
+    then
+      echo "docker build
+        --pull --rm --force-rm --no-cache
+        -t ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}
+           ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:latest
+           ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:latest-alpine . " ;
+  else
+    echo "docker build
+      --pull --rm --force-rm --no-cache
+      -t ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}
+         ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${TRAVIS_BRANCH}
+         ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}:${TRAVIS_BRANCH}-alpine . " ;
+  fi
+- echo "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
+- echo "docker push ${DOCKER_USERNAME}/${DOCKER_IMAGE_NAME}"
 #
 - ./mvnw -Pdocs >/dev/null
 - mkdir -p target/generated-docs
@@ -99,8 +116,14 @@ before_deploy:
 env:
   global:
   - TERM=dumb
+  - DOCKER_USERNAME=daggerok
+  - DOCKER_IMAGE_NAME=cassandra
+  # $GITHUB_TOKEN
   - secure: kyFU7WbiiBSegIywE+1njIzLYih+MyD3FWJUsyQ0ITbF4h4NKG5TrCnEkl0dJbfpshMNKJfCGya3VPpeAFC1fsNaNItyPj8IbAEVTiY4rguSB643FGIxr+87InDsYNVIIEEeRvHl1vJv6dKVcpGspqy9LWG0TlB2jgB03vuvUN2MrY/+7BFlTKYKNnZfEdwNm2wsuFEIbIISA43XD77RUODTDzTsUHWkc8nebmwZHbHC8kCUIezzMH13GU/NpbEu2UP+FWLVgOalqDkfksWObW174rALg1qlUfc37y/qn2G54x7tfsGr/LAuPpIbR7hWTZhqklFb0bx9zZUN1vaH/saENTMhzdw1p0I9Wu0LCO3Vov+skAYIj4Nf0axSB9Ym/X2b6VS09mkuB5M2pHSZnA6iqwmtSBq51LklG6QdIrQ1xlZAafDAtBPKUib8oVqRERz/nFDbf4bFdzBEVuTvaY+Zx8Hh00sfJvt/ib9e8Bk4d0F2oDBcSZkUhQ5H9Kew/DNcGIoKsnptJB/zbcozbL66BKU5HWbz9Wuu2b20WwBwn2ib9bhptDQfiSXVVvIya1u2ogsYMr29/rXnrDFxuSFFRUMQ2e00Iigpae36mr5X4ESM89MIQ9b8oFkSTHLAJUWqM3NG0x5BWw22A1/K6atYh4RgKCssZMxq51C4bqU=
+  # $GITHUB_PASSWORD
   - secure: a4M1qaGu9vkAw9//empim+yYSaa1Q47YooDWdht7K/41AUaUL+tWOtnIn1Q2UtHLrX2BS23XUK1g9rtGfnSQWKTMN+Jk3omSSAVUrsGUz5LmIUuFnnfRwKqJctJ0jiaYDDHnxlShggYi1eUpXiCvjhtiZ3DZCTdBQ1T9vTut3XukFIwR43lXm9UQHMoF0QNouD3ke1NAZdAR4sTbMrYmCkChfWBe93vUY6M4aCiDtM1se6j9dlr1prIrmd6GIcL9p9F0fMZQT3qMpTU7HbRwnhJ6Pp19WQYFa9OHP+0zky0xvuk3uo1i+Mox1FGjBgi0wnTyYPiZ8s7pWyAM/AAeYsg+pQ3f42tEKK5E7y5D2WyDo9V2YEjFJDVJTViVDEXwrhOZ2Ji2ddKODdFLZOxHFE35lAP8SE1L7hJ8gup/ciRYkFhojAAV47fSZgOX5Ot4j9ARS4vscSc+ESFOUVgCR/zKpH3wU1GzHJ2NLseryPBv7sAVaOSHncVTrsnVVe6EP6J1NHc+UcxtEQCbPK6++kkLMsnei6fXq7mUIHtqT2xR+msmKRCLgYnJlaNk4s4Dr5JPVzmoU0yXwAZswUbn3aCpItLobnG9AALAypdQt7VlNKFCBwvPe7m7XTroImotG65h6S24edftrUSPc/5JD4x+wIJV0VOHl0MQaiVPXbs=
+  # $DOCKER_PASSWORD
+  - secure: nxIaFijdC5tTXWgd2yU1XuPhzzWGUOfUMdUULIsFDhT9RZHRzWPMyfDPvA6b+A8STKcZEZif8pK1DhcY781pcxHQsbT2OMztCj2p+dP+cgicB08C2GcfiD/cqo0qe49psu6Bno4Q5MGXWO99+CkF/p7SeUg+D3vmwNRL/8XGHGt53Q1qSRfPfUZAFbGwrwZ3p7EChr+Re/6jS3thmLy+lozCNYmYa22dsAa8+a3pjXMkYaXgiQvFJU4AjCsl9mpUEzaMTuspjkD4BT1OboqCnvhLFHhLKWkds8Iys9kf+ZC4EicsuMBufHXfP+g4wfHFx0eoESL9nbQTuq74166LzD3KFOwP22Q4Eu2dEV2n7yF3UOqBS96apPk9Qc/wxnePMBcwIN5eJKqjBQYCSz6sAq5QmThJOCYkoYz2oORLJ+3ej1n3TdP0QhXpWCWVQ2R3hoj9vxr62VIsHA9xoqysNPidqXYSFls+tQIgmYIhaCraFWEqsrdNCWq6m+dglRogAh6zGobF33fkaOwUkz0r/GbejBmd4XgIfVkiP3VJFq8zTIy3dL9b9PdUXo+A5uK5S2kJnksPb7aPX0edqsTN5Q8ssQegWy8G4EVfo3sRNlLh+UeAVKkX3J0UA516AvJcSyLZZmo+figqpFiVuAEI08dpUcb8ZH8qIe+thR7LF5c=
 
 deploy:
   provider: pages

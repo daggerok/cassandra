@@ -1,6 +1,6 @@
 FROM openjdk:8u171-jre-alpine3.8
 MAINTAINER Maksim Kostromin https://github.com/daggerok
-ARG VERSION_ARG='0.0.1'
+ARG VERSION_ARG='0.0.1-bin'
 ARG JAVA_OPTS_ARGS='\
  -Djavax.net.debug=ssl \
  -Djava.net.preferIPv4Stack=true \
@@ -28,7 +28,7 @@ RUN apk --no-cache --update add busybox-suid bash curl unzip sudo openssh-client
 USER cassandra
 WORKDIR /home/cassandra
 VOLUME /home/cassandra
-ENTRYPOINT java ${JAVA_OPTS} -jar ./app.jar
+ENTRYPOINT /bin/bash ./app.jar
 CMD /bin/bash
 EXPOSE ${PORT}
 HEALTHCHECK --timeout=1s \

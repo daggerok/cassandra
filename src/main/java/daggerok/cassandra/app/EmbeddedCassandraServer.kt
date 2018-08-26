@@ -4,7 +4,6 @@ import info.archinnov.achilles.embedded.CassandraEmbeddedServer
 import info.archinnov.achilles.embedded.CassandraEmbeddedServerBuilder
 import info.archinnov.achilles.embedded.CassandraShutDownHook
 import info.archinnov.achilles.type.TypedMap
-import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
@@ -72,14 +71,14 @@ class EmbeddedCassandraServer(val env: Environment) : InitializingBean {
     cassandraEmbeddedServerBuilder
         .withSavedCachesFolder(savedCaches)
 
-//    val addresses = addresses().filterNot { it.contains("127.0.0.1") }
-//    val address = if (addresses.isEmpty()) "127.0.0.1" else addresses.first()
-//    cassandraEmbeddedServerBuilder
-//        .withBroadcastRpcAddress(address)
-//        .withBroadcastAddress(address)
-//        .withRpcAddress(address)
-//        .withListenAddress(address)
-//    println("\n\nlisten address: $address\n")
+    val addresses = addresses().filterNot { it.contains("127.0.0.1") }
+    val address = if (addresses.isEmpty()) "127.0.0.1" else addresses.first()
+    cassandraEmbeddedServerBuilder
+        .withBroadcastRpcAddress(address)
+        .withBroadcastAddress(address)
+        .withRpcAddress(address)
+        .withListenAddress(address)
+    println("\n\nlisten address: $address\n")
 
     val cqlPort = env.getProperty("cassandra.port", "9042").toInt()
     cassandraEmbeddedServerBuilder
@@ -121,7 +120,7 @@ class EmbeddedCassandraServer(val env: Environment) : InitializingBean {
   @PreDestroy
   fun destroy() {
 
-    println("\n\nKilling jvm...\n")
+    println("\n\nShutdown cassandra...\n")
     cassandraShutDownHook.shutDownNow()
 
     Thread {
